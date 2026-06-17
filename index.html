@@ -6,12 +6,7 @@ html_content = '''<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>号码提取工具</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -21,7 +16,6 @@ html_content = '''<!DOCTYPE html>
             justify-content: center;
             padding: 20px;
         }
-
         .container {
             background: white;
             border-radius: 20px;
@@ -30,32 +24,25 @@ html_content = '''<!DOCTYPE html>
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-
         h1 {
             text-align: center;
             color: #1a1a2e;
             margin-bottom: 10px;
             font-size: 1.8em;
         }
-
         .subtitle {
             text-align: center;
             color: #888;
             margin-bottom: 30px;
             font-size: 0.9em;
         }
-
-        .input-area {
-            margin-bottom: 20px;
-        }
-
+        .input-area { margin-bottom: 20px; }
         label {
             display: block;
             color: #555;
             margin-bottom: 8px;
             font-weight: 500;
         }
-
         textarea {
             width: 100%;
             min-height: 150px;
@@ -64,15 +51,8 @@ html_content = '''<!DOCTYPE html>
             border-radius: 12px;
             font-size: 1em;
             resize: vertical;
-            transition: border-color 0.3s;
             font-family: monospace;
         }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
         .btn {
             width: 100%;
             padding: 15px;
@@ -82,19 +62,10 @@ html_content = '''<!DOCTYPE html>
             border-radius: 12px;
             font-size: 1.1em;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             margin-bottom: 20px;
         }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .output-section {
-            margin-bottom: 20px;
-        }
-
+        .btn:hover { opacity: 0.9; }
+        .output-section { margin-bottom: 20px; }
         .output-label {
             color: #555;
             font-size: 1em;
@@ -104,7 +75,6 @@ html_content = '''<!DOCTYPE html>
             justify-content: space-between;
             align-items: center;
         }
-
         .output-box {
             background: #f8f9fa;
             border-radius: 12px;
@@ -112,7 +82,6 @@ html_content = '''<!DOCTYPE html>
             min-height: 60px;
             border: 2px solid #e0e0e0;
         }
-
         .output-box pre {
             font-family: monospace;
             font-size: 1.1em;
@@ -121,12 +90,7 @@ html_content = '''<!DOCTYPE html>
             word-break: break-all;
             margin: 0;
         }
-
-        .empty {
-            color: #ccc;
-            font-size: 1em;
-        }
-
+        .empty { color: #ccc; }
         .copy-btn {
             background: #667eea;
             color: white;
@@ -135,66 +99,22 @@ html_content = '''<!DOCTYPE html>
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.85em;
-            transition: background 0.3s;
         }
-
-        .copy-btn:hover {
-            background: #5a6fd6;
-        }
-
-        .copy-btn.copied {
-            background: #4caf50;
-        }
-
+        .copy-btn:hover { background: #5a6fd6; }
+        .copy-btn.copied { background: #4caf50; }
         .stats {
             text-align: center;
             color: #888;
             font-size: 0.9em;
             margin-bottom: 20px;
         }
-
-        .rules {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-
-        .rules h3 {
-            font-size: 1em;
-            color: #555;
-            margin-bottom: 10px;
-        }
-
-        .rules ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .rules li {
-            color: #888;
-            font-size: 0.9em;
-            padding: 5px 0;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .rules li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #667eea;
-        }
-
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-
         @media (max-width: 600px) {
-            .two-column {
-                grid-template-columns: 1fr;
-            }
+            .two-column { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -205,18 +125,18 @@ html_content = '''<!DOCTYPE html>
 
         <div class="input-area">
             <label for="input">输入文本：</label>
-            <textarea id="input" placeholder="例如：&#10;14257533668&#10;Zhongping Chen&#10;Age 73 • Bellevue, WA&#10;14159399439&#10;Wen Sun&#10;Age 60 • Novato, CA"></textarea>
+            <textarea id="input" placeholder="例如：\n14257533668\nZhongping Chen\nAge 73 • Bellevue, WA\n14159399439\nWen Sun\nAge 60 • Novato, CA"></textarea>
         </div>
 
-        <button class="btn" onclick="extract()">提取号码</button>
+        <button class="btn" onclick="doExtract()">提取号码</button>
 
         <div id="stats" class="stats"></div>
 
         <div class="two-column">
             <div class="output-section">
                 <div class="output-label">
-                    <span>📱 电话号码（去掉开头的1）</span>
-                    <button class="copy-btn" id="copyNumbers" onclick="copyNumbers()" style="display:none;">复制</button>
+                    <span>📱 电话号码</span>
+                    <button class="copy-btn" id="copyNumbersBtn" onclick="copyNumbers()" style="display:none;">复制</button>
                 </div>
                 <div class="output-box">
                     <pre id="numbersResult"><span class="empty">等待输入...</span></pre>
@@ -226,38 +146,28 @@ html_content = '''<!DOCTYPE html>
             <div class="output-section">
                 <div class="output-label">
                     <span>💬 问候语</span>
-                    <button class="copy-btn" id="copyGreetings" onclick="copyGreetings()" style="display:none;">复制</button>
+                    <button class="copy-btn" id="copyGreetingsBtn" onclick="copyGreetings()" style="display:none;">复制</button>
                 </div>
                 <div class="output-box">
                     <pre id="greetingsResult"><span class="empty">等待输入...</span></pre>
                 </div>
             </div>
         </div>
-
-        <div class="rules">
-            <h3>处理规则：</h3>
-            <ul>
-                <li>提取文本中所有以1开头的11位号码</li>
-                <li>去掉号码开头的数字 1</li>
-                <li>识别每个号码后面的姓名</li>
-                <li>电话号码和问候语分开展示，方便分别复制</li>
-            </ul>
-        </div>
     </div>
 
     <script>
-        let extractedNumbers = [];
-        let extractedGreetings = [];
+        var phoneNumbers = [];
+        var greetings = [];
 
-        function extract() {
-            const input = document.getElementById('input').value;
-            const numbersResult = document.getElementById('numbersResult');
-            const greetingsResult = document.getElementById('greetingsResult');
-            const statsDiv = document.getElementById('stats');
-            const copyNumbersBtn = document.getElementById('copyNumbers');
-            const copyGreetingsBtn = document.getElementById('copyGreetings');
+        function doExtract() {
+            var input = document.getElementById('input').value;
+            var numbersResult = document.getElementById('numbersResult');
+            var greetingsResult = document.getElementById('greetingsResult');
+            var statsDiv = document.getElementById('stats');
+            var copyNumbersBtn = document.getElementById('copyNumbersBtn');
+            var copyGreetingsBtn = document.getElementById('copyGreetingsBtn');
 
-            if (!input.trim()) {
+            if (!input || !input.trim()) {
                 numbersResult.innerHTML = '<span class="empty">请输入内容</span>';
                 greetingsResult.innerHTML = '<span class="empty">请输入内容</span>';
                 statsDiv.textContent = '';
@@ -266,47 +176,49 @@ html_content = '''<!DOCTYPE html>
                 return;
             }
 
-            // 按行分割
-            const lines = input.split(/\\r?\\n/);
-            extractedNumbers = [];
-            extractedGreetings = [];
-            let currentNumber = null;
-            let currentName = null;
+            // 清理输入，统一换行符
+            var lines = input.replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n').split('\\n');
+            
+            phoneNumbers = [];
+            greetings = [];
+            
+            var currentPhone = '';
+            var currentName = '';
 
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
                 if (!line) continue;
 
-                // 检查是否是号码（以1开头的11位数字）
-                const phoneMatch = line.match(/^(1\\d{10})$/);
+                // 检查是否是11位号码（以1开头）
+                var phoneMatch = line.match(/^1\\d{10}$/);
                 if (phoneMatch) {
-                    // 如果之前有未处理的号码，先保存
-                    if (currentNumber && currentName) {
-                        extractedNumbers.push(currentNumber.substring(1));
-                        extractedGreetings.push(`Uncle ${currentName}, is that you?`);
+                    // 保存之前的
+                    if (currentPhone && currentName) {
+                        phoneNumbers.push(currentPhone.substring(1));
+                        greetings.push('Uncle ' + currentName + ', is that you?');
                     }
-                    currentNumber = phoneMatch[1];
-                    currentName = null;
+                    currentPhone = line;
+                    currentName = '';
                     continue;
                 }
 
-                // 检查是否是姓名行
-                if (currentNumber && !currentName) {
-                    const nameMatch = line.match(/^([A-Za-z]+\\s+[A-Za-z]+)$/);
-                    if (nameMatch && !line.includes('Age') && !line.includes('•')) {
-                        currentName = nameMatch[1];
+                // 检查是否是姓名（纯字母，两个单词）
+                if (currentPhone && !currentName) {
+                    var nameMatch = line.match(/^([A-Za-z]+\\s+[A-Za-z]+)$/);
+                    if (nameMatch && line.indexOf('Age') === -1 && line.indexOf('•') === -1) {
+                        currentName = line;
                     }
                 }
             }
 
             // 处理最后一个
-            if (currentNumber && currentName) {
-                extractedNumbers.push(currentNumber.substring(1));
-                extractedGreetings.push(`Uncle ${currentName}, is that you?`);
+            if (currentPhone && currentName) {
+                phoneNumbers.push(currentPhone.substring(1));
+                greetings.push('Uncle ' + currentName + ', is that you?');
             }
 
-            if (extractedNumbers.length === 0) {
-                numbersResult.innerHTML = '<span class="empty">未找到有效号码</span>';
+            if (phoneNumbers.length === 0) {
+                numbersResult.innerHTML = '<span class="empty">未找到有效号码，请检查输入格式</span>';
                 greetingsResult.innerHTML = '<span class="empty">未找到有效号码</span>';
                 statsDiv.textContent = '';
                 copyNumbersBtn.style.display = 'none';
@@ -315,52 +227,72 @@ html_content = '''<!DOCTYPE html>
             }
 
             // 显示结果
-            numbersResult.textContent = extractedNumbers.join('\\n');
-            greetingsResult.textContent = extractedGreetings.join('\\n');
+            numbersResult.textContent = phoneNumbers.join('\\n');
+            greetingsResult.textContent = greetings.join('\\n');
             
-            statsDiv.textContent = `共提取 ${extractedNumbers.length} 个号码`;
+            statsDiv.textContent = '共提取 ' + phoneNumbers.length + ' 个号码';
             copyNumbersBtn.style.display = 'inline-block';
             copyGreetingsBtn.style.display = 'inline-block';
             copyNumbersBtn.textContent = '复制';
-            copyNumbersBtn.classList.remove('copied');
+            copyNumbersBtn.className = 'copy-btn';
             copyGreetingsBtn.textContent = '复制';
-            copyGreetingsBtn.classList.remove('copied');
+            copyGreetingsBtn.className = 'copy-btn';
         }
 
         function copyNumbers() {
-            const btn = document.getElementById('copyNumbers');
-            const text = extractedNumbers.join('\\n');
+            var btn = document.getElementById('copyNumbersBtn');
+            var text = phoneNumbers.join('\\n');
             
-            navigator.clipboard.writeText(text).then(() => {
-                btn.textContent = '已复制 ✓';
-                btn.classList.add('copied');
-                setTimeout(() => {
+            navigator.clipboard.writeText(text).then(function() {
+                btn.textContent = '已复制';
+                btn.className = 'copy-btn copied';
+                setTimeout(function() {
                     btn.textContent = '复制';
-                    btn.classList.remove('copied');
+                    btn.className = 'copy-btn';
+                }, 2000);
+            }).catch(function() {
+                // 备用方案
+                var textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                btn.textContent = '已复制';
+                btn.className = 'copy-btn copied';
+                setTimeout(function() {
+                    btn.textContent = '复制';
+                    btn.className = 'copy-btn';
                 }, 2000);
             });
         }
 
         function copyGreetings() {
-            const btn = document.getElementById('copyGreetings');
-            const text = extractedGreetings.join('\\n');
+            var btn = document.getElementById('copyGreetingsBtn');
+            var text = greetings.join('\\n');
             
-            navigator.clipboard.writeText(text).then(() => {
-                btn.textContent = '已复制 ✓';
-                btn.classList.add('copied');
-                setTimeout(() => {
+            navigator.clipboard.writeText(text).then(function() {
+                btn.textContent = '已复制';
+                btn.className = 'copy-btn copied';
+                setTimeout(function() {
                     btn.textContent = '复制';
-                    btn.classList.remove('copied');
+                    btn.className = 'copy-btn';
+                }, 2000);
+            }).catch(function() {
+                var textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                btn.textContent = '已复制';
+                btn.className = 'copy-btn copied';
+                setTimeout(function() {
+                    btn.textContent = '复制';
+                    btn.className = 'copy-btn';
                 }, 2000);
             });
         }
-
-        // 支持回车键提取（Ctrl+Enter）
-        document.getElementById('input').addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'Enter') {
-                extract();
-            }
-        });
     </script>
 </body>
 </html>'''
@@ -369,5 +301,5 @@ output_path = "/mnt/agents/output/number-extractor.html"
 with open(output_path, "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print(f"✅ 文件已更新: {output_path}")
+print(f"✅ 文件已修复: {output_path}")
 print(f"文件大小: {len(html_content)} 字符")
