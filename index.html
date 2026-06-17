@@ -44,7 +44,7 @@
         }
         textarea {
             width: 100%;
-            min-height: 150px;
+            min-height: 180px;
             padding: 15px;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
@@ -115,17 +115,35 @@
         @media (max-width: 600px) {
             .two-column { grid-template-columns: 1fr; }
         }
+        .format-info {
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            font-size: 0.85em;
+            color: #666;
+        }
+        .format-info strong {
+            color: #333;
+        }
     </style>
 <base target="_blank">
 </head>
 <body>
     <div class="container">
         <h1>号码提取工具</h1>
-        <p class="subtitle">输入文本，自动提取号码和生成问候语</p>
+        <p class="subtitle">支持多种格式，自动提取号码和生成问候语</p>
+
+        <div class="format-info">
+            <strong>支持格式：</strong><br>
+            格式1: 14257533668 / Zhongping Chen / Age 73<br>
+            格式2: (732) 208-2725 / Alan Cheng / Wireless<br>
+            格式3: 16122039160 * Zhigang Zhang / Westport, CT
+        </div>
 
         <div class="input-area">
             <label>输入文本：</label>
-            <textarea id="inputText" placeholder="例如：&#10;14257533668&#10;Zhongping Chen&#10;Age 73 - Bellevue, WA&#10;14159399439&#10;Wen Sun&#10;Age 60 - Novato, CA"></textarea>
+            <textarea id="inputText" placeholder="支持多种格式，粘贴即可"></textarea>
         </div>
 
         <button class="btn" id="extractBtn">提取号码</button>
@@ -156,11 +174,9 @@
     </div>
 
     <script>
-        // 全局变量
         var phoneNumbers = [];
         var greetings = [];
 
-        // 页面加载完成后绑定事件
         window.onload = function() {
             document.getElementById('extractBtn').onclick = doExtract;
             document.getElementById('copyNumbersBtn').onclick = copyNumbers;
@@ -184,48 +200,29 @@
                 return;
             }
 
-            // 统一换行符并分割
-            var text = input.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-            var lines = text.split('\n');
-
             phoneNumbers = [];
             greetings = [];
 
-            var currentPhone = '';
-            var currentName = '';
+            // 统一换行符
+            var text = input.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            var lines = text.split('\n');
 
-            for (var i = 0; i < lines.length; i++) {
+            var i = 0;
+            while (i < lines.length) {
                 var line = lines[i].trim();
-                if (line === '') continue;
-
-                // 检查是否是11位号码（以1开头）
-                var isPhone = /^1[0-9]{10}$/.test(line);
-                if (isPhone) {
-                    // 保存之前的
-                    if (currentPhone !== '' && currentName !== '') {
-                        phoneNumbers.push(currentPhone.substring(1));
-                        greetings.push('Uncle ' + currentName + ', is that you?');
-                    }
-                    currentPhone = line;
-                    currentName = '';
+                if (line === '') {
+                    i++;
                     continue;
                 }
 
-                // 检查是否是姓名（纯字母，两个单词）
-                if (currentPhone !== '' && currentName === '') {
-                    var isName = /^[A-Za-z]+\s+[A-Za-z]+$/.test(line);
-                    var hasAge = line.indexOf('Age') !== -1;
-                    var hasDot = line.indexOf('-') !== -1;
-                    if (isName && !hasAge && !hasDot) {
-                        currentName = line;
-                    }
+                var result = processEntry(lines, i);
+                if (result) {
+                    phoneNumbers.push(result.phone);
+                    greetings.push(result.greeting);
+                    i = result.nextIndex;
+                } else {
+                    i++;
                 }
-            }
-
-            // 处理最后一个
-            if (currentPhone !== '' && currentName !== '') {
-                phoneNumbers.push(currentPhone.substring(1));
-                greetings.push('Uncle ' + currentName + ', is that you?');
             }
 
             if (phoneNumbers.length === 0) {
@@ -237,7 +234,6 @@
                 return;
             }
 
-            // 显示结果
             numbersResult.textContent = phoneNumbers.join('\n');
             greetingsResult.textContent = greetings.join('\n');
 
@@ -248,6 +244,82 @@
             copyNumbersBtn.className = 'copy-btn';
             copyGreetingsBtn.textContent = '复制';
             copyGreetingsBtn.className = 'copy-btn';
+        }
+
+        // 处理单个条目，支持多种格式
+        function processEntry(lines, startIndex) {
+            var line = lines[startIndex].trim();
+            if (line === '') return null;
+
+            var phone = '';
+            var name = '';
+            var nextIndex = startIndex + 1;
+
+            // 格式1: (732) 208-2725  或  732-208-2725  或 (732)208-2725
+            var format1Match = line.match(/^\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})$/);
+            if (format1Match) {
+                phone = format1Match[1] + format1Match[2] + format1Match[3];
+                // 下一行是姓名
+                if (startIndex + 1 < lines.length) {
+                    var nextLine = lines[startIndex + 1].trim();
+                    var nameMatch = nextLine.match(/^([A-Za-z]+)\s+([A-Za-z]+)$/);
+                    if (nameMatch && nextLine.indexOf('Age') === -1 && nextLine.indexOf('Wireless') === -1 && nextLine.indexOf('/') === -1) {
+                        name = nameMatch[1] + ' ' + nameMatch[2];
+                        nextIndex = startIndex + 2;
+                    }
+                }
+                if (name !== '') {
+                    return {
+                        phone: phone,
+                        greeting: 'Uncle ' + name + ', is that you?',
+                        nextIndex: nextIndex
+                    };
+                }
+                return null;
+            }
+
+            // 格式2: 16122039160 * Zhigang Zhang / Westport, CT  (同一行)
+            var format2Match = line.match(/^(1[0-9]{10})\s*[*\s]\s*([A-Za-z]+)\s+([A-Za-z]+)\s*\/\s*.+$/);
+            if (format2Match) {
+                phone = format2Match[1].substring(1);
+                name = format2Match[2] + ' ' + format2Match[3];
+                return {
+                    phone: phone,
+                    greeting: 'Uncle ' + name + ', is that you?',
+                    nextIndex: startIndex + 1
+                };
+            }
+
+            // 格式3: 1开头的11位号码，后面多行有姓名
+            var format3Match = line.match(/^1([0-9]{10})$/);
+            if (format3Match) {
+                phone = format3Match[1];
+                // 向后查找姓名
+                for (var j = startIndex + 1; j < lines.length && j < startIndex + 5; j++) {
+                    var searchLine = lines[j].trim();
+                    if (searchLine === '') continue;
+
+                    var nameMatch = searchLine.match(/^([A-Za-z]+)\s+([A-Za-z]+)$/);
+                    if (nameMatch) {
+                        var candidate = nameMatch[1] + ' ' + nameMatch[2];
+                        if (searchLine.indexOf('Age') === -1 && searchLine.indexOf('Wireless') === -1) {
+                            name = candidate;
+                            nextIndex = j + 1;
+                            break;
+                        }
+                    }
+                }
+                if (name !== '') {
+                    return {
+                        phone: phone,
+                        greeting: 'Uncle ' + name + ', is that you?',
+                        nextIndex: nextIndex
+                    };
+                }
+                return null;
+            }
+
+            return null;
         }
 
         function copyNumbers() {
