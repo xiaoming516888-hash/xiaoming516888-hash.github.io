@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+html_content = r'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -127,7 +128,6 @@
             color: #333;
         }
     </style>
-<base target="_blank">
 </head>
 <body>
     <div class="container">
@@ -236,7 +236,7 @@
 
             numbersResult.textContent = phoneNumbers.join('\n');
             greetingsResult.textContent = greetings.join('\n');
-
+            
             statsDiv.textContent = '共提取 ' + phoneNumbers.length + ' 个号码';
             copyNumbersBtn.style.display = 'inline-block';
             copyGreetingsBtn.style.display = 'inline-block';
@@ -252,7 +252,7 @@
             if (line === '') return null;
 
             var phone = '';
-            var name = '';
+            var firstName = '';
             var nextIndex = startIndex + 1;
 
             // 格式1: (732) 208-2725  或  732-208-2725  或 (732)208-2725
@@ -264,14 +264,14 @@
                     var nextLine = lines[startIndex + 1].trim();
                     var nameMatch = nextLine.match(/^([A-Za-z]+)\s+([A-Za-z]+)$/);
                     if (nameMatch && nextLine.indexOf('Age') === -1 && nextLine.indexOf('Wireless') === -1 && nextLine.indexOf('/') === -1) {
-                        name = nameMatch[1] + ' ' + nameMatch[2];
+                        firstName = nameMatch[1];
                         nextIndex = startIndex + 2;
                     }
                 }
-                if (name !== '') {
+                if (firstName !== '') {
                     return {
                         phone: phone,
-                        greeting: 'Uncle ' + name + ', is that you?',
+                        greeting: 'Uncle ' + firstName + ', are you there?',
                         nextIndex: nextIndex
                     };
                 }
@@ -282,10 +282,10 @@
             var format2Match = line.match(/^(1[0-9]{10})\s*[*\s]\s*([A-Za-z]+)\s+([A-Za-z]+)\s*\/\s*.+$/);
             if (format2Match) {
                 phone = format2Match[1].substring(1);
-                name = format2Match[2] + ' ' + format2Match[3];
+                firstName = format2Match[2];
                 return {
                     phone: phone,
-                    greeting: 'Uncle ' + name + ', is that you?',
+                    greeting: 'Uncle ' + firstName + ', are you there?',
                     nextIndex: startIndex + 1
                 };
             }
@@ -298,21 +298,22 @@
                 for (var j = startIndex + 1; j < lines.length && j < startIndex + 5; j++) {
                     var searchLine = lines[j].trim();
                     if (searchLine === '') continue;
-
+                    
                     var nameMatch = searchLine.match(/^([A-Za-z]+)\s+([A-Za-z]+)$/);
                     if (nameMatch) {
-                        var candidate = nameMatch[1] + ' ' + nameMatch[2];
+                        var candidateFirst = nameMatch[1];
+                        var candidateFull = candidateFirst + ' ' + nameMatch[2];
                         if (searchLine.indexOf('Age') === -1 && searchLine.indexOf('Wireless') === -1) {
-                            name = candidate;
+                            firstName = candidateFirst;
                             nextIndex = j + 1;
                             break;
                         }
                     }
                 }
-                if (name !== '') {
+                if (firstName !== '') {
                     return {
                         phone: phone,
-                        greeting: 'Uncle ' + name + ', is that you?',
+                        greeting: 'Uncle ' + firstName + ', are you there?',
                         nextIndex: nextIndex
                     };
                 }
@@ -325,7 +326,7 @@
         function copyNumbers() {
             var btn = document.getElementById('copyNumbersBtn');
             var text = phoneNumbers.join('\n');
-
+            
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(function() {
                     showCopied(btn);
@@ -340,7 +341,7 @@
         function copyGreetings() {
             var btn = document.getElementById('copyGreetingsBtn');
             var text = greetings.join('\n');
-
+            
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(function() {
                     showCopied(btn);
@@ -378,4 +379,11 @@
         }
     </script>
 </body>
-</html>
+</html>'''
+
+output_path = "/mnt/agents/output/number-extractor.html"
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print(f"✅ 文件已更新: {output_path}")
+print(f"文件大小: {len(html_content)} 字符")
