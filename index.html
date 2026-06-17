@@ -1,19 +1,9 @@
-import shutil
-import os
-
-# 复制照片到输出目录
-src = "/mnt/agents/upload/photo_2026-06-10_08-33-10.jpg"
-dst = "/mnt/agents/output/photo.jpg"
-shutil.copy2(src, dst)
-print("照片已复制到输出目录")
-
-# 创建完整的个人网站 HTML 文件
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amy Chen | 陈佳琪 - PE投资人 & 珠宝设计师</title>
+    <title>号码提取工具</title>
     <style>
         * {
             margin: 0;
@@ -23,987 +13,244 @@ html_content = '''<!DOCTYPE html>
 
         body {
             font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            background: #fafafa;
-        }
-
-        /* 导航栏 */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
-            padding: 15px 0;
-        }
-
-        nav .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #c9a96e;
-            letter-spacing: 2px;
-        }
-
-        .nav-links a {
-            color: #555;
-            text-decoration: none;
-            margin-left: 30px;
-            font-size: 0.95em;
-            transition: color 0.3s;
-            font-weight: 500;
-        }
-
-        .nav-links a:hover {
-            color: #c9a96e;
-        }
-
-        /* 首屏 */
-        .hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
-            background-size: 50px 50px;
-            opacity: 0.3;
-        }
-
-        .hero-content {
-            text-align: center;
-            color: white;
-            z-index: 1;
             padding: 20px;
         }
 
-        .hero-avatar {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid rgba(201, 169, 110, 0.6);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        .hero h1 {
-            font-size: 3em;
+        h1 {
+            text-align: center;
+            color: #1a1a2e;
             margin-bottom: 10px;
-            font-weight: 300;
-            letter-spacing: 3px;
+            font-size: 1.8em;
         }
 
-        .hero .name-en {
-            font-size: 1.2em;
-            color: #c9a96e;
-            letter-spacing: 5px;
-            margin-bottom: 15px;
-        }
-
-        .hero .title {
-            font-size: 1.1em;
-            color: rgba(255,255,255,0.7);
+        .subtitle {
+            text-align: center;
+            color: #888;
             margin-bottom: 30px;
-        }
-
-        .hero-tags {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .hero-tag {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(201, 169, 110, 0.4);
-            color: #c9a96e;
-            padding: 8px 20px;
-            border-radius: 25px;
             font-size: 0.9em;
         }
 
-        .scroll-down {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255,255,255,0.5);
-            font-size: 2em;
-            animation: bounce 2s infinite;
-            cursor: pointer;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
-            60% { transform: translateX(-50%) translateY(-5px); }
-        }
-
-        /* 通用容器 */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section {
-            padding: 80px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.2em;
-            margin-bottom: 15px;
-            color: #1a1a2e;
-            font-weight: 300;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: #888;
-            margin-bottom: 50px;
-            font-size: 1em;
-        }
-
-        /* 关于我 */
-        .about {
-            background: white;
-        }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: start;
-        }
-
-        .about-info h3 {
-            font-size: 1.5em;
-            color: #1a1a2e;
+        .input-area {
             margin-bottom: 20px;
-            font-weight: 400;
         }
 
-        .about-info p {
-            color: #666;
-            margin-bottom: 15px;
-            font-size: 1em;
-        }
-
-        .info-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 30px;
-        }
-
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .info-item:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #888;
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 8px;
             font-weight: 500;
         }
 
-        .info-value {
-            color: #333;
-            text-align: right;
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            resize: vertical;
+            transition: border-color 0.3s;
         }
 
-        /* 教育背景 */
-        .education {
-            background: #f8f9fa;
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
-        .timeline {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(to bottom, #c9a96e, #1a1a2e);
-        }
-
-        .timeline-item {
-            display: flex;
-            justify-content: flex-end;
-            padding-right: 50%;
-            position: relative;
-            margin-bottom: 40px;
-        }
-
-        .timeline-item:nth-child(even) {
-            justify-content: flex-start;
-            padding-right: 0;
-            padding-left: 50%;
-        }
-
-        .timeline-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            max-width: 350px;
-            position: relative;
-        }
-
-        .timeline-item:nth-child(odd) .timeline-content::after {
-            content: '';
-            position: absolute;
-            right: -10px;
-            top: 20px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            transform: rotate(45deg);
-        }
-
-        .timeline-item:nth-child(even) .timeline-content::after {
-            content: '';
-            position: absolute;
-            left: -10px;
-            top: 20px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            transform: rotate(45deg);
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 16px;
-            height: 16px;
-            background: #c9a96e;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 0 3px #c9a96e;
-        }
-
-        .timeline-date {
-            color: #c9a96e;
-            font-weight: 600;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-        }
-
-        .timeline-school {
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
             font-size: 1.1em;
-            color: #1a1a2e;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .timeline-detail {
-            color: #888;
-            font-size: 0.9em;
-        }
-
-        /* 职业 */
-        .career {
-            background: white;
-        }
-
-        .career-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .career-card {
-            background: #f8f9fa;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .career-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-        }
-
-        .career-icon {
-            font-size: 3em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
             margin-bottom: 20px;
         }
 
-        .career-card h3 {
-            font-size: 1.4em;
-            color: #1a1a2e;
-            margin-bottom: 15px;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
-        .career-card p {
-            color: #666;
-            font-size: 0.95em;
-        }
-
-        /* 兴趣爱好 */
-        .hobbies {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-        }
-
-        .hobbies .section-title,
-        .hobbies .section-subtitle {
-            color: white;
-        }
-
-        .hobbies-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .hobby-item {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 30px 20px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .hobby-item:hover {
-            background: rgba(201, 169, 110, 0.1);
-            border-color: rgba(201, 169, 110, 0.3);
-        }
-
-        .hobby-icon {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-        }
-
-        .hobby-name {
-            font-size: 1em;
-            color: rgba(255,255,255,0.8);
-        }
-
-        /* 美食 */
-        .food {
-            background: white;
-        }
-
-        .food-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-        }
-
-        .food-card {
+        .output-area {
             background: #f8f9fa;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: transform 0.3s;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 60px;
         }
 
-        .food-card:hover {
-            transform: translateY(-5px);
+        .output-label {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 10px;
         }
 
-        .food-header {
-            padding: 25px;
-            text-align: center;
-        }
-
-        .food-header h3 {
-            font-size: 1.3em;
+        .result {
+            font-size: 1.5em;
             color: #1a1a2e;
+            font-weight: 600;
+            word-break: break-all;
         }
 
-        .food-header .flag {
-            font-size: 2em;
-            margin-bottom: 10px;
+        .empty {
+            color: #ccc;
+            font-size: 1em;
         }
 
-        .food-list {
-            padding: 0 25px 25px;
+        .rules {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
 
-        .food-item {
-            background: white;
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            font-size: 0.95em;
+        .rules h3 {
+            font-size: 1em;
             color: #555;
+            margin-bottom: 10px;
         }
 
-        .food-desc {
-            padding: 0 25px 25px;
+        .rules ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rules li {
             color: #888;
-            font-size: 0.85em;
-            line-height: 1.6;
+            font-size: 0.9em;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
         }
 
-        /* 影视书籍 */
-        .media {
-            background: #f8f9fa;
+        .rules li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
         }
 
-        .media-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .media-tab {
-            padding: 10px 25px;
-            border-radius: 25px;
-            background: white;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s;
+        .copy-btn {
+            background: #667eea;
+            color: white;
             border: none;
-            font-size: 1em;
-        }
-
-        .media-tab.active {
-            background: #1a1a2e;
-            color: white;
-        }
-
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
-
-        .media-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-
-        .media-card h4 {
-            color: #1a1a2e;
-            margin-bottom: 8px;
-            font-size: 1.1em;
-        }
-
-        .media-card .year {
-            color: #c9a96e;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 0.9em;
-            margin-bottom: 10px;
+            margin-top: 10px;
+            transition: background 0.3s;
         }
 
-        .media-card p {
-            color: #888;
-            font-size: 0.9em;
+        .copy-btn:hover {
+            background: #5a6fd6;
         }
 
-        /* 联系 */
-        .contact {
-            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
-            color: white;
-            text-align: center;
-        }
-
-        .contact .section-title {
-            color: white;
-        }
-
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            gap: 50px;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-
-        .contact-item {
-            text-align: center;
-        }
-
-        .contact-item .icon {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .contact-item h4 {
-            font-size: 1.1em;
-            margin-bottom: 5px;
-            font-weight: 400;
-        }
-
-        .contact-item p {
-            color: rgba(255,255,255,0.6);
-            font-size: 0.9em;
-        }
-
-        /* 页脚 */
-        footer {
-            background: #0a0a1a;
-            color: rgba(255,255,255,0.4);
-            text-align: center;
-            padding: 30px 0;
-            font-size: 0.9em;
-        }
-
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2em; }
-            .about-grid { grid-template-columns: 1fr; }
-            .career-grid { grid-template-columns: 1fr; }
-            .hobbies-grid { grid-template-columns: repeat(2, 1fr); }
-            .food-grid { grid-template-columns: 1fr; }
-            .media-grid { grid-template-columns: 1fr; }
-            .timeline::before { left: 20px; }
-            .timeline-item,
-            .timeline-item:nth-child(even) {
-                justify-content: flex-start;
-                padding-left: 50px;
-                padding-right: 0;
-            }
-            .timeline-dot { left: 20px; transform: translateX(-50%); }
-            .timeline-item:nth-child(odd) .timeline-content::after,
-            .timeline-item:nth-child(even) .timeline-content::after {
-                left: -10px;
-                right: auto;
-            }
-            .nav-links { display: none; }
-        }
-
-        /* 平滑滚动 */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* 动画 */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .copy-btn.copied {
+            background: #4caf50;
         }
     </style>
+<base target="_blank">
 </head>
 <body>
+    <div class="container">
+        <h1>📞 号码提取工具</h1>
+        <p class="subtitle">输入任意文本，自动提取并处理号码</p>
 
-    <!-- 导航 -->
-    <nav>
-        <div class="container">
-            <div class="logo">AMY CHEN</div>
-            <div class="nav-links">
-                <a href="#about">关于</a>
-                <a href="#education">教育</a>
-                <a href="#career">职业</a>
-                <a href="#hobbies">兴趣</a>
-                <a href="#food">美食</a>
-                <a href="#media">影视</a>
-                <a href="#contact">联系</a>
-            </div>
+        <div class="input-area">
+            <label for="input">输入文本：</label>
+            <textarea id="input" placeholder="例如：13476680603
+Li Chen
+Age 60 • Collinsville, IL"></textarea>
         </div>
-    </nav>
 
-    <!-- 首屏 -->
-    <section class="hero">
-        <div class="hero-content">
-            <img src="photo.jpg" alt="陈佳琪" class="hero-avatar">
-            <div class="name-en">AMY CHEN</div>
-            <h1>陈佳琪</h1>
-            <p class="title">PE投资人 · 珠宝设计师 · MBA</p>
-            <div class="hero-tags">
-                <span class="hero-tag">医疗美容AI</span>
-                <span class="hero-tag">区块链投资</span>
-                <span class="hero-tag">私人珠宝定制</span>
-                <span class="hero-tag">上海财经大学</span>
-            </div>
+        <button class="btn" onclick="extract()">提取号码</button>
+
+        <div class="output-area">
+            <div class="output-label">提取结果：</div>
+            <div id="result" class="empty">等待输入...</div>
+            <button class="copy-btn" id="copyBtn" onclick="copyResult()" style="display:none;">复制结果</button>
         </div>
-        <div class="scroll-down">↓</div>
-    </section>
 
-    <!-- 关于我 -->
-    <section class="section about" id="about">
-        <div class="container">
-            <h2 class="section-title">关于我</h2>
-            <p class="section-subtitle">About Me</p>
-            <div class="about-grid">
-                <div class="about-info">
-                    <h3>你好，我是 Amy</h3>
-                    <p>我是一名 PE 投资人，主要从事医疗美容人工智能、人工智能和区块链初创公司等领域的投资。同时我也是一名私人珠宝设计师，拥有自己的工作室。</p>
-                    <p>出生于上海，现居住于美国加利福尼亚州比佛利山庄。毕业于上海财经大学 MBA，拥有扎实的商业分析能力和敏锐的投资眼光。</p>
-                    <p>性格如金牛座般稳定严谨，热爱阅读、品茶、健身、潜水、高尔夫和烹饪。相信投资不仅是数字的游戏，更是对人性和趋势的洞察。</p>
-                </div>
-                <div class="info-card">
-                    <div class="info-item">
-                        <span class="info-label">姓名</span>
-                        <span class="info-value">陈佳琪 / Amy Chen</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">年龄</span>
-                        <span class="info-value">39岁 (1987.05.10)</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">身高</span>
-                        <span class="info-value">177cm</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">星座</span>
-                        <span class="info-value">金牛座 ♉</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">血型</span>
-                        <span class="info-value">O型</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">婚姻</span>
-                        <span class="info-value">单身</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">语言</span>
-                        <span class="info-value">中文、英文</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">现居地</span>
-                        <span class="info-value">美国 · 比佛利山庄</span>
-                    </div>
-                </div>
-            </div>
+        <div class="rules">
+            <h3>处理规则：</h3>
+            <ul>
+                <li>从杂乱文本中提取纯数字号码</li>
+                <li>去掉号码开头的数字 1</li>
+                <li>去掉后面的 ***、??? 等干扰字符</li>
+                <li>保持原始数字顺序不变</li>
+            </ul>
         </div>
-    </section>
-
-    <!-- 教育背景 -->
-    <section class="section education" id="education">
-        <div class="container">
-            <h2 class="section-title">教育背景</h2>
-            <p class="section-subtitle">Education</p>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2000.08 - 2000.07</div>
-                        <div class="timeline-school">外国语小学</div>
-                        <div class="timeline-detail">中国上海市徐汇区</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2000.09 - 2003.07</div>
-                        <div class="timeline-school">上海中学</div>
-                        <div class="timeline-detail">美国加利福尼亚州</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2003.09 - 2007.06</div>
-                        <div class="timeline-school">上海交通大学附属中学</div>
-                        <div class="timeline-detail">中国上海市宝山区</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2007.08 - 2011.06</div>
-                        <div class="timeline-school">上海财经大学 · 本科</div>
-                        <div class="timeline-detail">中国上海市杨浦区</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2011.07 - 2012.08</div>
-                        <div class="timeline-school">上海财经大学 · MBA硕士</div>
-                        <div class="timeline-detail">4+2 本硕连读 · 工商管理专业</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 职业 -->
-    <section class="section career" id="career">
-        <div class="container">
-            <h2 class="section-title">职业领域</h2>
-            <p class="section-subtitle">Career</p>
-            <div class="career-grid">
-                <div class="career-card">
-                    <div class="career-icon">💼</div>
-                    <h3>PE 投资人</h3>
-                    <p>主要从事医疗美容人工智能、人工智能和区块链初创公司等领域的投资。凭借敏锐的商业嗅觉和扎实的财务分析能力，发掘高成长性企业。</p>
-                </div>
-                <div class="career-card">
-                    <div class="career-icon">💎</div>
-                    <h3>私人珠宝设计师</h3>
-                    <p>拥有自己的珠宝设计工作室，将艺术审美与商业洞察相结合，为高端客户定制独一无二的珠宝作品。</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 兴趣爱好 -->
-    <section class="section hobbies" id="hobbies">
-        <div class="container">
-            <h2 class="section-title">兴趣爱好</h2>
-            <p class="section-subtitle">Hobbies & Interests</p>
-            <div class="hobbies-grid">
-                <div class="hobby-item">
-                    <div class="hobby-icon">📚</div>
-                    <div class="hobby-name">阅读</div>
-                </div>
-                <div class="hobby-item">
-                    <div class="hobby-icon">🍵</div>
-                    <div class="hobby-name">品茶</div>
-                </div>
-                <div class="hobby-item">
-                    <div class="hobby-icon">🏋️</div>
-                    <div class="hobby-name">健身</div>
-                </div>
-                <div class="hobby-item">
-                    <div class="hobby-icon">🤿</div>
-                    <div class="hobby-name">潜水</div>
-                </div>
-                <div class="hobby-item">
-                    <div class="hobby-icon">⛳</div>
-                    <div class="hobby-name">高尔夫</div>
-                </div>
-                <div class="hobby-item">
-                    <div class="hobby-icon">👨‍🍳</div>
-                    <div class="hobby-name">烹饪</div>
-                </div>
-                <div class="hobby-item">
-                    <div class="hobby-icon">🛍️</div>
-                    <div class="hobby-name">购物</div>
-                </div>
-                <div class="hobby-item">
-                    <div class="hobby-icon">🎬</div>
-                    <div class="hobby-name">电影</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 美食 -->
-    <section class="section food" id="food">
-        <div class="container">
-            <h2 class="section-title">美食偏好</h2>
-            <p class="section-subtitle">Favorite Cuisine</p>
-            <div class="food-grid">
-                <div class="food-card">
-                    <div class="food-header">
-                        <div class="flag">🇨🇳</div>
-                        <h3>中餐</h3>
-                    </div>
-                    <div class="food-list">
-                        <div class="food-item">油爆大蛤</div>
-                        <div class="food-item">红烧海螺</div>
-                        <div class="food-item">糖酥鲤鱼</div>
-                        <div class="food-item">宫保鸡丁</div>
-                        <div class="food-item">鱼香肉丝</div>
-                        <div class="food-item">狮子头</div>
-                        <div class="food-item">叫花鸡</div>
-                    </div>
-                    <div class="food-desc">山东沿海传统名菜，历史悠久。1912年孙中山先生在烟台张裕宴会上曾品尝油爆大蛤，食后极为赞赏。</div>
-                </div>
-                <div class="food-card">
-                    <div class="food-header">
-                        <div class="flag">🇫🇷</div>
-                        <h3>法餐</h3>
-                    </div>
-                    <div class="food-list">
-                        <div class="food-item">马卡龙</div>
-                        <div class="food-item">鹅肝</div>
-                    </div>
-                    <div class="food-desc">马卡龙口感细腻，搭配苦咖啡最佳。法国鹅肝世界公认的美食，细滑爽口，可腌制后抹面包或煎食。</div>
-                </div>
-                <div class="food-card">
-                    <div class="food-header">
-                        <div class="flag">🇯🇵</div>
-                        <h3>日料</h3>
-                    </div>
-                    <div class="food-list">
-                        <div class="food-item">日式松茸蒸鸡蛋</div>
-                    </div>
-                    <div class="food-desc">松茸富含粗蛋白、维生素B1、B2等，具有益肠胃、理气化痰等功效。鸡蛋嫩滑，带着淡淡松茸清香。</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 影视书籍 -->
-    <section class="section media" id="media">
-        <div class="container">
-            <h2 class="section-title">影视与书籍</h2>
-            <p class="section-subtitle">Movies & Books</p>
-            
-            <h3 style="text-align:center; margin-bottom:30px; color:#1a1a2e; font-weight:400;">宫崎骏动画</h3>
-            <div class="media-grid">
-                <div class="media-card">
-                    <h4>天空之城</h4>
-                    <div class="year">1986年首映</div>
-                    <p>天空の城ラピュタ</p>
-                </div>
-                <div class="media-card">
-                    <h4>龙猫</h4>
-                    <div class="year">1988年首映</div>
-                    <p>となりのトトロ</p>
-                </div>
-                <div class="media-card">
-                    <h4>千与千寻</h4>
-                    <div class="year">2001年首映</div>
-                    <p>千と千尋の神隠し</p>
-                </div>
-            </div>
-
-            <h3 style="text-align:center; margin:50px 0 30px; color:#1a1a2e; font-weight:400;">经典电影</h3>
-            <div class="media-grid">
-                <div class="media-card">
-                    <h4>泰坦尼克号</h4>
-                    <div class="year">1997年</div>
-                    <p>Titanic</p>
-                </div>
-                <div class="media-card">
-                    <h4>忠犬八公</h4>
-                    <div class="year">2009年</div>
-                    <p>Hachikō</p>
-                </div>
-                <div class="media-card">
-                    <h4>华尔街之狼</h4>
-                    <div class="year">2013年</div>
-                    <p>The Wolf of Wall Street</p>
-                </div>
-            </div>
-
-            <h3 style="text-align:center; margin:50px 0 30px; color:#1a1a2e; font-weight:400;">书籍</h3>
-            <div class="media-grid">
-                <div class="media-card">
-                    <h4>格列佛游记</h4>
-                    <div class="year">Gulliver's Travels</div>
-                    <p>Jonathan Swift 所著讽刺小说，分为小人国、大人国、飞岛国、慧骃国四部分。</p>
-                </div>
-            </div>
-
-            <h3 style="text-align:center; margin:50px 0 30px; color:#1a1a2e; font-weight:400;">音乐</h3>
-            <div class="media-grid">
-                <div class="media-card">
-                    <h4>Hotel California</h4>
-                    <div class="year">Eagles 老鹰乐队</div>
-                    <p>"你可以随时退房，但是你永远无法离开" — 最爱的歌词</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 联系 -->
-    <section class="section contact" id="contact">
-        <div class="container">
-            <h2 class="section-title">联系我</h2>
-            <p class="section-subtitle">Get in Touch</p>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <div class="icon">📍</div>
-                    <h4>现居地</h4>
-                    <p>Beverly Hills, CA<br>美国加利福尼亚州</p>
-                </div>
-                <div class="contact-item">
-                    <div class="icon">🏠</div>
-                    <h4>国内房产</h4>
-                    <p>上海市浦东新区<br>东方悦居苑</p>
-                </div>
-                <div class="contact-item">
-                    <div class="icon">💼</div>
-                    <h4>职业咨询</h4>
-                    <p>PE投资 · 珠宝设计<br>欢迎交流合作</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer>
-        <div class="container">
-            <p>© 2026 Amy Chen 陈佳琪 · All Rights Reserved</p>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // 滚动动画
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
+        function extract() {
+            const input = document.getElementById('input').value;
+            const resultDiv = document.getElementById('result');
+            const copyBtn = document.getElementById('copyBtn');
 
-        document.querySelectorAll('.section').forEach(section => {
-            section.classList.add('fade-in');
-            observer.observe(section);
-        });
+            if (!input.trim()) {
+                resultDiv.innerHTML = '<span class="empty">请输入内容</span>';
+                copyBtn.style.display = 'none';
+                return;
+            }
 
-        // 平滑滚动到锚点
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+            // 提取所有数字
+            let numbers = input.replace(/\D/g, '');
+
+            // 如果号码以1开头，去掉开头的1
+            if (numbers.startsWith('1')) {
+                numbers = numbers.substring(1);
+            }
+
+            if (numbers.length === 0) {
+                resultDiv.innerHTML = '<span class="empty">未找到号码</span>';
+                copyBtn.style.display = 'none';
+                return;
+            }
+
+            resultDiv.textContent = numbers;
+            copyBtn.style.display = 'inline-block';
+            copyBtn.textContent = '复制结果';
+            copyBtn.classList.remove('copied');
+        }
+
+        function copyResult() {
+            const result = document.getElementById('result').textContent;
+            const copyBtn = document.getElementById('copyBtn');
+
+            navigator.clipboard.writeText(result).then(() => {
+                copyBtn.textContent = '已复制 ✓';
+                copyBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyBtn.textContent = '复制结果';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
             });
+        }
+
+        // 支持回车键提取（Ctrl+Enter）
+        document.getElementById('input').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                extract();
+            }
         });
     </script>
-
 </body>
-</html>'''
-
-# 保存到输出目录
-output_path = "/mnt/agents/output/index.html"
-with open(output_path, "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-print(f"✅ 网页已生成: {output_path}")
-print(f"✅ 照片已保存: /mnt/agents/output/photo.jpg")
-print("\n📁 文件清单:")
-print("  - index.html (主网页)")
-print("  - photo.jpg (头像照片)")
-print("\n💡 使用说明:")
-print("  1. 把这两个文件放到同一个文件夹")
-print("  2. 双击 index.html 即可预览")
-print("  3. 上传到 GitHub Pages 即可让所有人访问")
+</html>
